@@ -1,0 +1,142 @@
+## HW6 Write-Up - James Brainard
+### Part 1: Divide & Conquer
+**1) Suppose the player starts with 5 tokens and wants to play 1 round? What is the expected number of tokens they will have after 1 round? How about 10 tokens and 1 round? Is there a commonality to the expected number of tokens won/lost after playing 1 round, regardless of the starting number of tokens?**
+
+The expected number of tokens after 1 round, starting with 5 tokens, is 4.89.
+*Top-Down Result: 4.89  ||| Found in 1 miliseconds.*
+
+The expected number of tokens after 1 round, starting with 10 tokens, is 9.89.
+*Top-Down Result: 4.89  ||| Found in 2 miliseconds.*
+
+In both situations, the expected number of tokens after 1 round decreases by .11. 
+
+**2) Suppose the player starts with 5 tokens and wants to play 5 rounds? What is the expected number of tokens they will have after 1 round? How about 10 tokens and 5 rounds? Is there a commonality to the expected number of tokens won/lost after playing 5 rounds, regardless of the starting number of tokens?**
+
+The expected number of tokens after 1 round, starting with 5 tokens, is 4.89.
+*Top-Down Result: 4.89  ||| Found in 1 miliseconds.*
+
+The expected number of tokens after 5 rounds, starting with 5 tokens, is 4.45.
+*Top-Down Result: 4.45  ||| Found in 1 miliseconds.*
+
+The expected number of tokens after 5 rounds, starting with 10 tokens, is 9.45.
+*Top-Down Result: 9.45  ||| Found in 2 miliseconds.*
+
+There is, once again, a commonality to the expected number of tokens won/lost after playing 5 rounds. Whether starting with 10 tokens or 5 tokens, after 5 rounds, the player is expected to lose 0.55 tokens (5 rounds * .11 expected loss per round).
+
+**3) Based on your experiments, does the starting number of tokens have any impact on the amount of work (assuming the number of rounds is the same)? Can you explain why that would be the case?**
+
+The starting number of tokens does not have any impact on the amount of work with the divide-and-conquer solution. We can build a game tree made of nodes as possible outcomes. Each game state has four possible outcomes, no matter the number of tokens - there is no amount of tokens to be 'wagered,' and thus the outcomes do not change in size. The game tree also has as many layers (height) as the game has rounds. This is, again, regardless of tokens, which can be thought of as just a value in the tree nodes that don't actually determine how large the tree is.
+
+**4) Is there a practical limit to how many rounds your expectedTopDown method can handle? If so, what is that limit??**
+
+There is a practical limit due to the recursive nature of expectedTopDown. The method involves recursive steps that repeat across different branches of the recursive tree. This repetition increases exponentially as the number of rounds increases. In fact, according to testing, it appears that the time complexity for the top-down recursive algorithm is approximately 2<sup>r</sup>, where *r* is the number of rounds.
+
+*Playing Evensies with 48 tokens and 24 rounds:*
+*Top-Down Result: 45.36  ||| Found in ***429*** miliseconds.*
+
+*Playing Evensies with 50 tokens and 25 rounds:*
+*Top-Down Result: 47.25  ||| Found in ***771*** miliseconds.*
+
+*Playing Evensies with 52 tokens and 26 rounds:*
+*Top-Down Result: 49.14  ||| Found in ***1683*** miliseconds.*
+
+*Playing Evensies with 54 tokens and 27 rounds:*
+*Top-Down Result: 51.03  ||| Found in ***2961*** miliseconds.*
+
+*Playing Evensies with 56 tokens and 28 rounds:*
+*Top-Down Result: 52.92  ||| Found in ***7030*** miliseconds.*
+
+### Part 2: Dynamic Programming
+**1) Does this new method return the same answers as the previous one? How would you go about testing this?**
+The new dynamic programming method returns the exact same answers as the top-down recursive method. The code output strangely returns numbers rounded 0.01 differently at times. The non-rounded numbers are exactly the same; I only returned the rounded numbers for better looks.
+
+*Playing Evensies with 5 tokens and 1 rounds:*
+*Top-Down Result: 4.89  ||| Found in 2 miliseconds.*
+*Bottom-Up Result: 4.89 ||| Found in 0 miliseconds.*
+
+*Playing Evensies with 10 tokens and 1 rounds:*
+*Top-Down Result: 9.89  ||| Found in 2 miliseconds.*
+*Bottom-Up Result: 9.89 ||| Found in 0 miliseconds.*
+
+*Playing Evensies with 5 tokens and 5 rounds:*
+*Top-Down Result: 4.45  ||| Found in 1 miliseconds.*
+*Bottom-Up Result: 4.44 ||| Found in 0 miliseconds.*
+
+*Playing Evensies with 5 tokens and 5 rounds:*
+*Top-Down Result: 9.45  ||| Found in 1 miliseconds.*
+*Bottom-Up Result: 9.44 ||| Found in 1 miliseconds.*
+
+**2) Is this version noticeably faster? If so, how long can the games be before the delay using expectedBottomUp is significant?**
+
+This version is noticeably faster when the number of rounds increases. Since there are no repeated recursive calculations, expectedBottomUp is much faster at larger numbers of rounds. expectedBottomUp *could* have more time associated with the overhead cost of building the table, however, this time is so small that it would only have an impact on the first few rounds, which is completely insignificant.
+
+*Playing Evensies with 52 tokens and 26 rounds:*
+*Top-Down Result: 49.14  ||| Found in 1692 miliseconds.*
+*Bottom-Up Result: 49.11  ||| Found in 0 miliseconds.*
+
+*Playing Evensies with 54 tokens and 27 rounds:*
+*Top-Down Result: 51.03  ||| Found in 2926 miliseconds.*
+*Bottom-Up Result: 51.0  ||| Found in 0 miliseconds.*
+
+*Playing Evensies with 56 tokens and 28 rounds:*
+*Top-Down Result: 52.92  ||| Found in 7041 miliseconds.*
+*Bottom-Up Result: 52.89  ||| Found in 1 miliseconds.*
+
+**3) If you start with a small number of tokens (e.g., 10) and play a significantly larger number of rounds (e.g., 100), how many tokens are you expected to win/lose? If you play the same number of rounds but with a comparably large number of starting tokens (e.g., tokens = rounds), are the expected wins/losses the same or different? Can you provide an explanation?**
+
+If you start with a small number of tokens and play a significantly larger number of rounds, it is expected that you will lose all of your tokens and go into debt. Since *all rounds are independent* and *all rounds have a mathematically expected loss of .11*, any number of rounds such that:
+
+**rounds * .11 >= tokens**
+
+will cause the total expectation to drop below 0. Playing the same number of rounds with a larger number of tokens will yield the same expected loss; exactly the same in size but smaller in proportion due to the larger number of starting tokens.
+
+*Playing Evensies with 10 tokens and 100 rounds:*
+*Bottom-Up Result: -1.11 ||| Found in 12 miliseconds.*
+
+*Playing Evensies with 100 tokens and 100 rounds: *
+*Bottom-Up Result: 88.89 ||| Found in 6 miliseconds.*
+
+### Part 3: Caching
+**1) Does this new method return the same answers as the previous two? How would you go about testing this?**
+
+The new caching method returns the exact same answers as both the top-down recursive method and the bottom-up dynamic programming method.
+
+*Playing Evensies with 52 tokens and 26 rounds:*
+*Top-Down Result: 49.14  ||| Found in 1692 miliseconds.*
+*Bottom-Up Result: 49.11  ||| Found in 0 miliseconds.*
+*Caching Result: 49.14  ||| Found in 0 miliseconds.*
+
+*Playing Evensies with 54 tokens and 27 rounds:*
+*Top-Down Result: 51.03  ||| Found in 2926 miliseconds.*
+*Bottom-Up Result: 51.0  ||| Found in 0 miliseconds.*
+*Caching Result: 51.03  ||| Found in 0 miliseconds.*
+
+*Playing Evensies with 56 tokens and 28 rounds:*
+*Top-Down Result: 52.92  ||| Found in 7041 miliseconds.*
+*Bottom-Up Result: 52.89  ||| Found in 1 miliseconds.*
+*Caching Result: 52.92 ||| Found in 1 miliseconds.*
+
+**2) How does the method compare with the other two in terms of speed? Can it handle longer games than expectedTopDown? How does it compare with expectedBottomUp?**
+
+The cache method is exponentially faster than the top-down recursive method. It can handle much longer games and can do so much faster than this method. It also seems to be slightly faster than expectedBottomUp when it comes to massive, impractical Evensies games, which is unexpected.
+
+***Bottom-Up Results:***
+*Playing Evensies with 2996 tokens and 1498 rounds:*
+*Bottom-Up Result: 2829.56  ||| Found in 67 miliseconds.*
+
+*Playing Evensies with 2998 tokens and 1499 rounds:*
+*Bottom-Up Result: 2831.44  ||| Found in 66 miliseconds.*
+
+*Playing Evensies with 3000 tokens and 1500 rounds:*
+*Bottom-Up Result: 2833.33  ||| Found in 51 miliseconds.*
+
+***Caching results:***
+*Playing Evensies with 2996 tokens and 1498 rounds:*
+*Caching Result: 2831.22  ||| Found in 3 miliseconds.*
+
+*Playing Evensies with 2998 tokens and 1499 rounds:*
+*Caching Result: 2833.11  ||| Found in 0 miliseconds.*
+
+*Playing Evensies with 3000 tokens and 1500 rounds:*
+*Caching Result: 2835.0  ||| Found in 0 miliseconds.*
+

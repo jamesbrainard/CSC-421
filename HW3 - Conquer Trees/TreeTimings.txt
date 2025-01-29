@@ -1,0 +1,131 @@
+# TreeSet + Random
+# Using initial size 10,000 and doubling to 30,000,000
+10,000 22
+20,000 5
+40,000 20
+80,000 33
+160,000 72
+320,000 186
+640,000 516
+1,280,000 1327
+2,560,000 3464
+5,120,000 10259
+10,240,000 27702
+20,480,000 60806
+## The complexity of these timings is O(N log(N)) - the time increases by a
+## slightly-over-double value every time the problem size doubles.
+## TreeSet utilizes a self-balancing red-black tree; each insertion takes
+## approximately O(log N) time, as does rebalancing, and this algorithm 
+## does N insertions.
+
+# TreeSet + Sorted
+# Using initial size 10,000 and doubling to 30,000,000
+10000 10
+20000 0
+40000 7
+80000 14
+160000 24
+320000 50
+640000 94
+1280000 200
+2560000 439
+5120000 863
+10240000 1848
+20480000 4140
+## The complexity of these timings is O(N log(N)) - the time increases by a
+## slightly-over-double value every time the problem size doubles.
+## TreeSet utilizes a self-balancing red-black tree; each insertion takes
+## approximately O(log N) time, as does rebalancing, and this algorithm 
+## does N insertions.
+
+# Old BST + Random
+# Using initial size 10,000 and doubling to 30,000,000
+10000 15
+20000 0
+40000 20
+80000 21
+160000 54
+320000 148
+640000 520
+1280000 1131
+2560000 3602
+5120000 9937
+10240000 27815
+20480000 57434
+## The complexity of these timings is O(N log(N)) - the time increases by a
+## slightly-over-double value every time the problem size doubles.
+## With random data, we can expect that a resulting tree is approximately
+## balanced. This means that each insertion should take approximately
+## O(log N) time, and this algorithm does N insertions.
+
+# Old BST + Sorted
+# Using initial size 10,000 and doubling to 160,000
+10000 475
+20000 1817
+40000 7668
+80000 31188
+160000 146011
+## The complexity of these timings is O(N^2) - the time increases by an 
+## approximate factor of four every time the problem size doubles.
+## With sorted data being inserted into a binary search tree, a
+## long, one-sided tree (essentially a linked list) is created. This leads
+## to O(N) degenerating insertion operations.
+
+# New BST + Random
+# Using initial size 10,000 and doubling to 30,000,000
+10000 12
+20000 5
+40000 14
+80000 26
+160000 51
+320000 149
+640000 382
+1280000 1072
+2560000 2642
+5120000 6380
+10240000 16549
+20480000 36067
+## The complexity of these timings is O(N log(N)) - the time increases by a
+## slightly-over-double value every time the problem size doubles.
+## Explained further below.
+
+# New BST + Sorted
+# Using initial size 10,000 and doubling to 32,000,000
+10000 44
+20000 12
+40000 28
+80000 49
+160000 104
+320000 307
+640000 581
+1280000 1642
+2560000 3958
+5120000 8011
+10240000 18361
+20480000 39851
+## The complexity of these timings is O(N log N) - the time increases by
+## slightly more than double each time the problem size doubles.
+## Explained further below.
+
+
+## In a typical BST, inserting items in sorted order creates what is essentially
+## a linked list - every new item is inserted to the right of the previous item.
+## Since the code has to travel to the bottom of the tree to insert new elements,
+## This creates O(N^2) timings, since the Nth insertion is done in O(N) time.
+
+## However, in this new BST, introducing the rebalance method transforms the tree
+## into a new, more balanced structure while doing repeated sorted insertions. 
+## Rebalancing requires converting the tree to a sorted list and then rebuilding it.
+## Rebalancing is an O(N) operation, using in-order traversal O(N) to create
+## a new list and using divide-and-conquer to rebuild the tree.
+
+## Each insertion takes O(log N) time, assuming that the tree is approximately balanced.
+## Checking for imbalance, since height and size are stored as fields, takes O(1) and
+## can be done on every add.
+
+## For N insertions, each taking O(log N) time in the new BinarySearchTree,
+## the total time becomes O(N log N). Occasional rebalancing costs O(N), but this
+## does not dominate the total time complexity since O(N log N) is greater.
+
+## Thus, O(N log N) accounts for the overall process, a significant time improvement over
+## O(N^2) at the cost of more memory (each node holding extra fields for height and size)
